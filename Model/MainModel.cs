@@ -58,6 +58,14 @@ namespace Plytoteka.Model
                 Albumy.Add(a);
         }
 
+        public void OdswiezSkladowe()
+        {
+            Skladowe = new ObservableCollection<Skladowa>();
+            var skladowe = RepoSkladowa.PobierzWszystko();
+            foreach (var s in skladowe)
+                Skladowe.Add(s);
+        }
+
         public Zespol ZnajdzZespolPoId(ushort? id)
         {
             foreach (var z in Zespoly)
@@ -112,6 +120,24 @@ namespace Plytoteka.Model
         }
         public bool UsunAlbumZBazy(ushort? idAlbumu)
         {
+            // Usun skladowe albumu
+            foreach(var skladowa in Skladowe)
+            {
+                if (skladowa.AlbumId == idAlbumu)
+                {
+                    if (RepoSkladowa.UsunPoAlbumie(idAlbumu))
+                    {
+                        for (int i = 0; i < Skladowe.Count; i++)
+                        {
+                            if (Skladowe[i].AlbumId == idAlbumu)
+                            {
+                                Skladowe.RemoveAt(i);
+                            }
+                        }
+                    }
+                }
+            }
+            // Usun album
             if (RepoAlbum.Usun(idAlbumu))
             {
                 for (int i = 0; i < Albumy.Count; i++)
@@ -125,6 +151,21 @@ namespace Plytoteka.Model
             }
             return false;
         }
+
+        public bool CzySkladowaJestJuzWRepozytorium(Skladowa skladowa) => Skladowe.Contains(skladowa);
+        public bool DodajSkladowaDoBazy(Skladowa skladowa)
+        {
+            if (!CzySkladowaJestJuzWRepozytorium(skladowa))
+            {
+                if (RepoSkladowa.Dodaj(skladowa))
+                {
+                    Skladowe.Add(skladowa);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         #endregion
     }
 }

@@ -19,12 +19,17 @@ namespace Plytoteka.ViewModel
         private ObservableCollection<Album> albumy = null;
         private ObservableCollection<Zespol> zespoly = null;
         private ObservableCollection<Skladowa> skladowe = null;
+        private ObservableCollection<Utwor> utwory = null;
+
         private List<string> typy = null;
+        private List<string> gatunki = null;
 
         private int indeksZaznaczonegoAlbumu = -1;
         private int indeksZespolu = -1;
         private int indeksTypu = -1;
+        private int indeksGatunku = -1;
         private int indeksSkladowej = -1;
+        private int indeksUtworu = -1;
 
         private ushort? id, zespolId;
         private string? zespol, wydawca, dlugosc;
@@ -32,7 +37,13 @@ namespace Plytoteka.ViewModel
         private int? dataWydania, ileUtworow;
         private TypAlbumu? typ;
 
+        private ushort? skladowaUtworId;
+        private string skladowaUtworTytul;
+        private int skladowaUtworDlugosc;
+        private Gatunek skladowaUtworGatunek;
+
         private bool dodawanieDostepne = true;
+        private bool dodawanieUtworuDostepne = false;
         private bool edycjaDostepna = false;
         #endregion
 
@@ -42,7 +53,10 @@ namespace Plytoteka.ViewModel
             this.model = model;
             albumy = model.Albumy;
             zespoly = model.Zespoly;
+            utwory = model.Utwory;
+
             typy = Enum.GetNames(enumType: typeof(TypAlbumu)).ToList();
+            gatunki = Enum.GetNames(enumType: typeof(Gatunek)).ToList();
         }
         #endregion
 
@@ -74,6 +88,36 @@ namespace Plytoteka.ViewModel
             {
                 indeksTypu = value;
                 onPropertyChanged(nameof(IndeksTypu));
+            }
+        }
+
+        public int IndeksGatunku
+        {
+            get => indeksGatunku;
+            set
+            {
+                indeksGatunku = value;
+                onPropertyChanged(nameof(IndeksGatunku));
+            }
+        }
+
+        public int IndeksSkladowej
+        {
+            get => indeksSkladowej;
+            set
+            {
+                indeksSkladowej = value;
+                onPropertyChanged(nameof(IndeksSkladowej));
+            }
+        }
+
+        public int IndeksUtworu
+        {
+            get => indeksUtworu;
+            set
+            {
+                indeksUtworu = value;
+                onPropertyChanged(nameof(IndeksUtworu));
             }
         }
 
@@ -109,9 +153,24 @@ namespace Plytoteka.ViewModel
             }
         }
 
+        public ObservableCollection<Utwor> Utwory
+        {
+            get => utwory;
+            set
+            {
+                utwory = value;
+                onPropertyChanged(nameof(Utwory));
+            }
+        }
+
         public List<string> Typy
         {
             get => typy;
+        }
+
+        public List<string> Gatunki
+        {
+            get => gatunki;
         }
 
         public ushort? Id
@@ -196,6 +255,46 @@ namespace Plytoteka.ViewModel
             }
         }
 
+        // SKLADOWE
+        public ushort? SkladowaUtworId
+        {
+            get => skladowaUtworId;
+            set
+            {
+                skladowaUtworId = value;
+                onPropertyChanged(nameof(SkladowaUtworId));
+            }
+        }
+        public string SkladowaUtworTytul
+        {
+            get => skladowaUtworTytul;
+            set
+            {
+                skladowaUtworTytul = value;
+                onPropertyChanged(nameof(SkladowaUtworTytul));
+            }
+        }
+        public int SkladowaUtworDlugosc
+        {
+            get => skladowaUtworDlugosc;
+            set
+            {
+                skladowaUtworDlugosc = value;
+                onPropertyChanged(nameof(SkladowaUtworDlugosc));
+            }
+        }
+        public Gatunek SkladowaUtworGatunek
+        {
+            get => skladowaUtworGatunek;
+            set
+            {
+                skladowaUtworGatunek = value;
+                onPropertyChanged(nameof(SkladowaUtworGatunek));
+            }
+        }
+
+        // INNE
+
         public bool DodawanieDostepne
         {
             get { return dodawanieDostepne; }
@@ -203,6 +302,16 @@ namespace Plytoteka.ViewModel
             {
                 dodawanieDostepne = value;
                 onPropertyChanged(nameof(DodawanieDostepne));
+            }
+        }
+
+        public bool DodawanieUtworuDostepne
+        {
+            get => dodawanieUtworuDostepne;
+            set
+            {
+                dodawanieUtworuDostepne = value;
+                onPropertyChanged(nameof(DodawanieUtworuDostepne));
             }
         }
 
@@ -224,6 +333,13 @@ namespace Plytoteka.ViewModel
             Albumy = model.Albumy;
             IndeksZaznaczonegoAlbumu = -1;
         }
+        public void OdswiezSkladowe()
+        {
+            model.OdswiezSkladowe();
+            Skladowe = model.PobierzSkladoweAlbumu(BiezacyAlbum);
+            IndeksSkladowej = -1;
+        }
+
         private ICommand zaladujWszystkieAlbumy = null;
         public ICommand ZaladujWszystkieAlbumy
         {
@@ -255,7 +371,10 @@ namespace Plytoteka.ViewModel
             Typ = null;
             Skladowe = null;
 
+            
+
             DodawanieDostepne = true;
+            DodawanieUtworuDostepne = false;
             EdycjaDostepna = false;
         }
         #endregion
@@ -286,6 +405,7 @@ namespace Plytoteka.ViewModel
                                 Skladowe = model.PobierzSkladoweAlbumu(BiezacyAlbum);
 
                                 DodawanieDostepne = false;
+                                DodawanieUtworuDostepne = true;
                                 EdycjaDostepna = true;
                             }
                             else
@@ -380,12 +500,39 @@ namespace Plytoteka.ViewModel
                         OdswiezAlbumy();
                         CzyscSzczegoly();
                         DodawanieDostepne = true;
+                        DodawanieUtworuDostepne = false;
                     }
                          ,
                     arg => IndeksZaznaczonegoAlbumu > -1
                    );
                 return usunAlbum;
             }
+        }
+
+        private ICommand dodajSkladowa = null;
+        public ICommand DodajSkladowa
+        {
+            get
+            {
+                if (dodajSkladowa == null)
+                    dodajSkladowa = new RelayCommand(
+                        arg =>
+                        {
+                            SkladowaUtworId = (ushort)Utwory[IndeksUtworu].Id;
+                            var skladowa = new Skladowa((ushort)BiezacyAlbum.Id, (ushort)SkladowaUtworId, SkladowaUtworDlugosc, SkladowaUtworGatunek);
+
+                            if (model.DodajSkladowaDoBazy(skladowa))
+                            {
+                                OdswiezSkladowe();
+                                CzyscSzczegoly();
+                            }
+                        }
+                        ,
+                        arg => (SkladowaUtworTytul != "") && (SkladowaUtworDlugosc > 1) && (BiezacyAlbum != null)
+                        );
+                return dodajSkladowa;
+            }
+
         }
         #endregion
     }

@@ -67,16 +67,17 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Usun(ushort? idAlbumu)
+        public static bool Usun(ushort? id)
         {
             bool stan = false;
 
             using (var connection = DBConnection.Instance.Connection)
             {
-                MySqlCommand command = new MySqlCommand($"{USUN} {idAlbumu}", connection);
+                MySqlCommand command = new MySqlCommand($"{USUN} {id}", connection);
                 connection.Open();
-                var id = command.ExecuteNonQuery();
-                stan = true;
+                var n = command.ExecuteNonQuery();
+                if (n == 1) stan = true;
+
                 connection.Close();
             }
             return stan;

@@ -13,7 +13,9 @@ namespace Plytoteka.DAL.Repositories
             "FROM skladowe s " +
             "JOIN albumy a ON s.id_albumu1 = a.id_albumu " +
             "JOIN utwory u ON s.id_utworu = u.id_utworu;";
-        private const string DODAJ = "INSERT INTO 'skladowe' ('id_albumu1', 'id_utworu', 'dlugosc', 'gatunek') VALUES ";
+        private const string DODAJ = "INSERT INTO skladowe (id_albumu1, id_utworu, dlugosc, gatunek) VALUES ";
+        private const string USUN_PO_ALBUMIE = "DELETE FROM skladowe WHERE id_albumu1=";
+        private const string USUN_PO_UTWORZE = "DELETE FROM skladowe WHERE id_utworu=";
         #endregion
 
         #region CRUD
@@ -66,9 +68,54 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Usun(ushort id)
+        public static bool Usun(ushort? idAlbumu, ushort? idUtworu)
         {
-            return true;
+            bool stan = false;
+
+            using (var connection = DBConnection.Instance.Connection)
+            {
+                string USUN = $"DELETE FROM skladowe WHERE id_albumu1={idAlbumu} AND id_utworu={idUtworu}";
+                MySqlCommand command = new MySqlCommand(USUN, connection);
+                connection.Open();
+                var n = command.ExecuteNonQuery();
+                if (n == 1) stan = true;
+
+                connection.Close();
+            }
+            return stan;
+        }
+
+        public static bool UsunPoAlbumie(ushort? id)
+        {
+            bool stan = false;
+
+            using (var connection = DBConnection.Instance.Connection)
+            {
+                MySqlCommand command = new MySqlCommand($"{USUN_PO_ALBUMIE} {id}", connection);
+                connection.Open();
+                var n = command.ExecuteNonQuery();
+                if (n == 1) stan = true;
+
+                connection.Close();
+            }
+            return stan;
+        }
+
+
+        public static bool UsunPoUtworze(ushort? id)
+        {
+            bool stan = false;
+
+            using (var connection = DBConnection.Instance.Connection)
+            {
+                MySqlCommand command = new MySqlCommand($"{USUN_PO_UTWORZE} {id}", connection);
+                connection.Open();
+                var n = command.ExecuteNonQuery();
+                if (n == 1) stan = true;
+
+                connection.Close();
+            }
+            return stan;
         }
         #endregion
     }

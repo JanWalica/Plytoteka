@@ -11,7 +11,6 @@ namespace Plytoteka.DAL.Repositories
         #region zapytania
         private const string WSZYSTKO = "SELECT * FROM utwory";
         private const string DODAJ = "INSERT INTO 'utwory' ('tytul', 'autor_tekstu', 'jezyk') VALUES ";
-        private const string USUN = 
         #endregion
 
         #region CRUD

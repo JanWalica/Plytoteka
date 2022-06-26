@@ -87,6 +87,7 @@
                             <RowDefinition Height="60px"/>
                             <RowDefinition Height="40px"/>
                             <RowDefinition Height="60px"/>
+                            <RowDefinition Height="40px"/>
                             <RowDefinition Height="60px"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
@@ -125,12 +126,12 @@
                             </StackPanel>
                         </Grid>
 
-                        <!-- Rok wydania -->
                         <Grid Grid.Row="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="60px"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
+                            <!-- Rok wydania -->
                             <TextBox Name="rok_wydania" Grid.Column="0"
                                          Text="{Binding AlbumyLista.DataWydania}" TextAlignment="Right"
                                          Width="50px" Margin="0,10,5,10"
@@ -145,11 +146,49 @@
                             <Label Grid.Column="1" Content="Wydawca"/>
                         </Grid>
                         
+                        <!-- Dodaj utwor -->
+                        <Button Content="Dodaj utwór" Grid.Row="3" HorizontalAlignment="Left"
+                                IsEnabled="{Binding AlbumyLista.DodawanieUtworuDostepne}"
+                                Command="{Binding AlbumyLista.DodajSkladowa}"/>
+                        
                         <!-- Utwor -->
+                        <Grid Grid.Row="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="100px"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Tytul -->
+                            <StackPanel Grid.Column="0" Orientation="Vertical">
+                                <TextBlock Margin="0,0,10,0" Text="Utwór:"/>
+                                <ComboBox
+                                      ItemsSource="{Binding AlbumyLista.Utwory}"
+                                      SelectedValue="{Binding AlbumyLista.SkladowaUtworTytul}"
+                                      SelectedIndex="{Binding AlbumyLista.IndeksUtworu}"
+                                      />
+                            </StackPanel>
 
-                        <!-- Utwory lista -->
+                            <!-- Długosc -->
+                            <TextBox Grid.Column="1"
+                                             Text="{Binding AlbumyLista.SkladowaUtworDlugosc}" TextAlignment="Right"
+                                             Margin="10"
+                                             />
+                            <Label Grid.Column="1" Content="Długość (s)"/>
+                            
+                            <!-- Gatunek -->
+                            <StackPanel Grid.Column="2" Orientation="Vertical">
+                                <TextBlock Margin="0,0,10,0" Text="Gatunek:"/>
+                                <ComboBox
+                                      ItemsSource="{Binding AlbumyLista.Gatunki}"
+                                      SelectedValue="{Binding AlbumyLista.SkladowaUtworGatunek}"
+                                      SelectedIndex="{Binding AlbumyLista.IndeksGatunku}"
+                                      />
+                            </StackPanel>
+                        </Grid>
+
+                    <!-- Utwory lista -->
                         <DataGrid x:Name="dg_lista_utworow"
-                              Grid.Row="4"
+                              Grid.Row="5"
                               IsReadOnly="True"
                               ItemsSource="{Binding AlbumyLista.Skladowe}"
                               SelectedItem="{Binding AlbumyLista.BiezacaSkladowa}"
