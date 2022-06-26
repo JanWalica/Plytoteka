@@ -145,11 +145,20 @@
                                          />
                             <Label Grid.Column="1" Content="Wydawca"/>
                         </Grid>
-                        
-                        <!-- Dodaj utwor -->
-                        <Button Content="Dodaj utwór" Grid.Row="3" HorizontalAlignment="Left"
+
+                        <StackPanel x:Name="sp_skladowe" Style="{StaticResource gray}"
+                                Grid.Row="3"
+                                Orientation="Horizontal" MinWidth="1" HorizontalAlignment="Left"
+                                >
+                            <!-- Dodaj utwor -->
+                            <Button Content="Dodaj utwór"
                                 IsEnabled="{Binding AlbumyLista.DodawanieUtworuDostepne}"
                                 Command="{Binding AlbumyLista.DodajSkladowa}"/>
+                            <!-- Dodaj utwor -->
+                            <Button Content="Usuń utwór"
+                                Command="{Binding AlbumyLista.UsunSkladowa}"/>
+
+                        </StackPanel>
                         
                         <!-- Utwor -->
                         <Grid Grid.Row="4">
@@ -187,28 +196,19 @@
                         </Grid>
 
                     <!-- Utwory lista -->
+                        <FrameworkElement x:Name="Proxy" Visibility="Collapsed"/>
                         <DataGrid x:Name="dg_lista_utworow"
                               Grid.Row="5"
                               IsReadOnly="True"
                               ItemsSource="{Binding AlbumyLista.Skladowe}"
                               SelectedItem="{Binding AlbumyLista.BiezacaSkladowa}"
-                              SelectedIndex="{Binding AlbumyLista.IndeksZaznaczonejSkladowej}"
+                              SelectedIndex="{Binding AlbumyLista.IndeksSkladowej}"
                               >
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Tytul" Binding="{Binding Utwor}"/>
                                 <DataGridTextColumn Header="Długość" Binding="{Binding Dlugosc}"/>
-                                <DataGridTextColumn Header="Gatunek" Binding="{Binding Gatunek}"
-                                                        />
-                                <DataGridTemplateColumn>
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Button Content="X"
-                                                    Margin="0"
-                                                    Padding="0"
-                                                    MinWidth="0"/>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Gatunek" Binding="{Binding Gatunek}"/>
+                                
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>

@@ -166,6 +166,22 @@ namespace Plytoteka.Model
             return false;
         }
 
+        public bool UsunSkladowaZBazy(ushort? idAlbumu, ushort idUtworu)
+        {
+            if (RepoSkladowa.Usun(idAlbumu, idUtworu))
+            {
+                for (int i = 0; i < Albumy.Count; i++)
+                {
+                    if (Skladowe[i].AlbumId == idAlbumu && Skladowe[i].UtworId == idUtworu)
+                    {
+                        Skladowe.RemoveAt(i);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
         #endregion
     }
 }

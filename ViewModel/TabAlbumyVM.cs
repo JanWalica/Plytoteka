@@ -39,8 +39,8 @@ namespace Plytoteka.ViewModel
 
         private ushort? skladowaUtworId;
         private string skladowaUtworTytul;
-        private int skladowaUtworDlugosc;
-        private Gatunek skladowaUtworGatunek;
+        private int? skladowaUtworDlugosc;
+        private Gatunek? skladowaUtworGatunek;
 
         private bool dodawanieDostepne = true;
         private bool dodawanieUtworuDostepne = false;
@@ -274,7 +274,7 @@ namespace Plytoteka.ViewModel
                 onPropertyChanged(nameof(SkladowaUtworTytul));
             }
         }
-        public int SkladowaUtworDlugosc
+        public int? SkladowaUtworDlugosc
         {
             get => skladowaUtworDlugosc;
             set
@@ -283,7 +283,7 @@ namespace Plytoteka.ViewModel
                 onPropertyChanged(nameof(SkladowaUtworDlugosc));
             }
         }
-        public Gatunek SkladowaUtworGatunek
+        public Gatunek? SkladowaUtworGatunek
         {
             get => skladowaUtworGatunek;
             set
@@ -371,7 +371,10 @@ namespace Plytoteka.ViewModel
             Typ = null;
             Skladowe = null;
 
-            
+            SkladowaUtworDlugosc = null;
+            SkladowaUtworGatunek = null;
+            SkladowaUtworId = null;
+            SkladowaUtworTytul = null;
 
             DodawanieDostepne = true;
             DodawanieUtworuDostepne = false;
@@ -389,6 +392,7 @@ namespace Plytoteka.ViewModel
                     pokazSzczegolyAlbumu = new RelayCommand(
                         arg =>
                         {
+                            CzyscSzczegoly();
                             if(IndeksZaznaczonegoAlbumu > -1)
                             {
                                 ZespolId = BiezacyAlbum.ZespolId;
@@ -519,11 +523,12 @@ namespace Plytoteka.ViewModel
                         arg =>
                         {
                             SkladowaUtworId = (ushort)Utwory[IndeksUtworu].Id;
-                            var skladowa = new Skladowa((ushort)BiezacyAlbum.Id, (ushort)SkladowaUtworId, SkladowaUtworDlugosc, SkladowaUtworGatunek);
+                            var skladowa = new Skladowa((ushort)BiezacyAlbum.Id, (ushort)SkladowaUtworId, (int)SkladowaUtworDlugosc, (Gatunek)SkladowaUtworGatunek);
 
                             if (model.DodajSkladowaDoBazy(skladowa))
                             {
                                 OdswiezSkladowe();
+                                OdswiezAlbumy();
                                 CzyscSzczegoly();
                             }
                         }
@@ -533,6 +538,30 @@ namespace Plytoteka.ViewModel
                 return dodajSkladowa;
             }
 
+        }
+
+        private ICommand usunSkladowa = null;
+        public ICommand UsunSkladowa
+        {
+            get
+            {
+                if (usunSkladowa == null)
+                    usunSkladowa = new RelayCommand(
+                    arg =>
+                    {
+                        SkladowaUtworId = (ushort)Skladowe[IndeksSkladowej].UtworId;
+                        model.UsunSkladowaZBazy(BiezacyAlbum.Id, (ushort)SkladowaUtworId);
+                        OdswiezSkladowe();
+                        OdswiezAlbumy();
+                        CzyscSzczegoly();
+                        DodawanieDostepne = true;
+                        DodawanieUtworuDostepne = false;
+                    }
+                         ,
+                    arg => IndeksSkladowej > -1
+                   );
+                return usunSkladowa;
+            }
         }
         #endregion
     }
