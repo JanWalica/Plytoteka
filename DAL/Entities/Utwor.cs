@@ -8,22 +8,22 @@ namespace Plytoteka.DAL.Entities
     class Utwor : ICRUDStrings
     {
         #region wlasnosci
-        public sbyte? Id { get; set; }
+        public ushort? Id { get; set; }
         public string Tytul { get; set; }
-        public string Autor { get; set; }
-        public string Jezyk { get; set; }
+        public string? Autor { get; set; }
+        public string? Jezyk { get; set; }
         #endregion
 
         #region konstruktory
         public Utwor(MySqlDataReader reader)
         {
-            Id = sbyte.Parse(reader["id_utworu"].ToString());
+            Id = ushort.Parse(reader["id_utworu"].ToString());
             Tytul = reader["tytul"].ToString();
-            Autor = reader["autor_tekstu"].ToString();
-            Jezyk = reader["jezyk"].ToString();
+            Autor = reader["autor_tekstu"]?.ToString();
+            Jezyk = reader["jezyk"]?.ToString();
         }
 
-        public Utwor(string tytul, string autor, string jezyk)
+        public Utwor(string tytul, string? autor, string? jezyk)
         {
             Id = null;
             Tytul = tytul;

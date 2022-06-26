@@ -9,7 +9,10 @@ namespace Plytoteka.DAL.Repositories
     static class RepoSkladowa
     {
         #region zapytania
-        private const string WSZYSTKO = "SELECT * FROM skladowe";
+        private const string WSZYSTKO = "SELECT s.id_albumu1, a.tytul AS tytul_albumu, s.id_utworu, u.tytul AS tytul_utworu, s.dlugosc, gatunek " +
+            "FROM skladowe s " +
+            "JOIN albumy a ON s.id_albumu1 = a.id_albumu " +
+            "JOIN utwory u ON s.id_utworu = u.id_utworu;";
         private const string DODAJ = "INSERT INTO 'skladowe' ('id_albumu1', 'id_utworu', 'dlugosc', 'gatunek') VALUES ";
         #endregion
 
@@ -45,7 +48,7 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Edytuj(Skladowa skladowa, sbyte idAlbumu, sbyte idUtworu)
+        public static bool Edytuj(Skladowa skladowa, ushort idAlbumu, ushort idUtworu)
         {
             bool stan = false;
 
@@ -63,7 +66,7 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Usun(sbyte id)
+        public static bool Usun(ushort id)
         {
             return true;
         }

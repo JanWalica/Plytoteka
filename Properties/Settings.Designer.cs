@@ -25,7 +25,7 @@ namespace Plytoteka.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("localhost")]
+        [global::System.Configuration.DefaultSettingValueAttribute("10.211.55.2")]
         public string server {
             get {
                 return ((string)(this["server"]));

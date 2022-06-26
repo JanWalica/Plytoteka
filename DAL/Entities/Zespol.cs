@@ -8,19 +8,19 @@ namespace Plytoteka.DAL.Entities
     class Zespol : ICRUDStrings
     {
         #region wlasnosci
-        public sbyte? Id { get; set; }
+        public ushort? Id { get; set; }
         public string Nazwa { get; set; }
-        public int DataZalozenia { get; set; }
-        public string Pochodzenie { get; set; }
+        public int? DataZalozenia { get; set; }
+        public string? Pochodzenie { get; set; }
         #endregion
 
         #region konstruktory
         public Zespol(MySqlDataReader reader)
         {
-            Id = sbyte.Parse(reader["id_zespolu"].ToString());
+            Id = ushort.Parse(reader["id_zespolu"].ToString());
             Nazwa = reader["nazwa"].ToString();
-            DataZalozenia = int.Parse(reader["data_zal"].ToString());
-            Pochodzenie = reader["pochodzenie"].ToString();
+            DataZalozenia = int.TryParse(reader["data_zal"].ToString(), out var dz) ? dz : default;
+            Pochodzenie = reader["pochodzenie"]?.ToString();
         }
 
         public Zespol(string nazwa, int dataZalozenia, string pochodzenie)
@@ -43,7 +43,7 @@ namespace Plytoteka.DAL.Entities
         #region metody
         public override string ToString()
         {
-            return $"{Nazwa} z {Pochodzenie}, założony {DataZalozenia}";
+            return $"{Nazwa}";
         }
 
         public string ToInsert()

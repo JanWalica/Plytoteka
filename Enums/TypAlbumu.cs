@@ -7,7 +7,6 @@ namespace Plytoteka.Enums
 {
     enum TypAlbumu
     {
-        inny,
         [Display(Name = "album studyjny")]
         album_studyjny,
         soundtrack,

@@ -2,14 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 
 namespace Plytoteka.DAL.Entities
 {
     class Czlonek : ICRUDStrings
     {
         #region wlasciwosci
-        public sbyte Artysta { get; set; }
-        public sbyte Zespol { get; set; }
+        public ushort Artysta { get; set; }
+        public ushort Zespol { get; set; }
         public int StartWspolpracy { get; set; }
         public int? KoniecWspolpracy { get; set; }
         #endregion
@@ -17,12 +18,12 @@ namespace Plytoteka.DAL.Entities
         #region konstruktory
         public Czlonek(MySqlDataReader reader)
         {
-            Artysta = sbyte.Parse(reader["id_artysty"].ToString());
-            Zespol = sbyte.Parse(reader["id_zespolu"].ToString());
+            Artysta = ushort.Parse(reader["id_artysty"].ToString());
+            Zespol = ushort.Parse(reader["id_zespolu"].ToString());
             StartWspolpracy = int.Parse(reader["pocz_wsp"].ToString());
-            KoniecWspolpracy = int.Parse(reader["koniec_wsp"].ToString());
+            KoniecWspolpracy = int.TryParse(reader["koniec_wsp"].ToString(), out var kw) ? kw : default;
         }
-        public Czlonek(sbyte artysta, sbyte zespol, int startWspolpracy, int? koniecWspolpracy)
+        public Czlonek(ushort artysta, ushort zespol, int startWspolpracy, int? koniecWspolpracy)
         {
             Artysta = artysta;
             Zespol = zespol;

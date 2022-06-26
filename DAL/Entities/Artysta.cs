@@ -8,26 +8,26 @@ namespace Plytoteka.DAL.Entities
     class Artysta : ICRUDStrings
     {
         #region wlasciwosci
-        public sbyte? Id { get; set; }
+        public ushort? Id { get; set; }
         public string Imie { get; set; }
         public string Nazwisko { get; set; }
-        public string Pseudonim { get; set; }
+        public string? Pseudonim { get; set; }
         public DateTime DataUr { get; set; }
-        public int StartKariery { get; set; }
+        public int? StartKariery { get; set; }
         #endregion
 
         #region konstruktory
         public Artysta(MySqlDataReader reader)
         {
-            Id = sbyte.Parse(reader["id_artysty"].ToString());
+            Id = ushort.Parse(reader["id_artysty"].ToString());
             Imie = reader["imie"].ToString();
             Nazwisko = reader["nazwisko"].ToString();
-            Pseudonim = reader["pseudonim"].ToString();
+            Pseudonim = reader["pseudonim"]?.ToString();
             DataUr = DateTime.Parse(reader["data_ur"].ToString());
-            StartKariery = int.Parse(reader["pocz_kariery"].ToString());
+            StartKariery = int.TryParse(reader["pocz_kariery"].ToString(), out var sk) ? sk : default;
         }
 
-        public Artysta(string imie, string nazwisko, string pseudonim, DateTime dataUr, int startKariery)
+        public Artysta(string imie, string nazwisko, string? pseudonim, DateTime dataUr, int? startKariery)
         {
             Id = null;
             Imie = imie.Trim();

@@ -8,18 +8,18 @@ namespace Plytoteka.DAL.Entities
     class Wystapienie : ICRUDStrings
     {
         #region wlasnosci
-        public sbyte Artysta { get; set; }
-        public sbyte Album { get; set; }
+        public ushort Artysta { get; set; }
+        public ushort Album { get; set; }
         #endregion
 
         #region konstruktory
         public Wystapienie(MySqlDataReader reader)
         {
-            Artysta = sbyte.Parse(reader["id_artysty1"].ToString());
-            Album = sbyte.Parse(reader["id_albumu"].ToString());
+            Artysta = ushort.Parse(reader["id_artysty1"].ToString());
+            Album = ushort.Parse(reader["id_albumu"].ToString());
         }
 
-        public Wystapienie(sbyte artysta, sbyte album)
+        public Wystapienie(ushort artysta, ushort album)
         {
             Artysta = artysta;
             Album = album;

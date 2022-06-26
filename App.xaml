@@ -4,6 +4,155 @@
              xmlns:local="clr-namespace:Plytoteka"
              StartupUri="View/MainWindow.xaml">
     <Application.Resources>
-         
+        <!-- STYLE -->
+        <!-- Stack Panel -->
+        <Style TargetType="StackPanel" x:Key="gray">
+            <Setter Property="Background" Value="#F5F6F7"/>
+        </Style>
+        <Style TargetType="StackPanel" x:Key="white">
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+        <!-- TabControl -->
+        <Style TargetType="TabControl">
+            <Setter Property="BorderThickness" Value="0, 1, 0, 0"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Background" Value="#F5F6F7"/>
+        </Style>
+        
+        <!-- Label -->
+        <Style TargetType="Label">
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Margin" Value="10,0,0,0"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+        
+        <Style TargetType="Label" x:Key="IsCorrectLabel">
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+        
+        <!-- CheckBox -->
+        <Style TargetType="CheckBox">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Margin" Value="0,21,0,0"/>
+        </Style>
+        
+        <!-- TextBlock -->
+        <Style TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        
+        <!-- ComboBox -->
+        <Style TargetType="ComboBox">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Grid -->
+        <Style TargetType="Grid" x:Key="szczegoly">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Background" Value="#F5F6F7"/>
+        </Style>
+        
+        <!-- Przycisk domyslny -->
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5, 10, 5, 10"/>
+            <Setter Property="Padding" Value="10, 0, 10, 0"/>
+            <Setter Property="MinWidth" Value="75px"/>
+        </Style>
+        <!-- Przycisk wl/wyl -->
+        <Style TargetType="Button" x:Key="on_off_fixed">
+            <Setter Property="Margin" Value="5, 10, 5, 10"/>
+            <Setter Property="Padding" Value="10, 0, 10, 0"/>
+            <Setter Property="Width" Value="115px"/>
+        </Style>
+        
+        <!-- pole wyszukiwania -->
+        <Style TargetType="TextBox" x:Key="search_box">
+            <Setter Property="Margin" Value="5, 10, 5, 10"/>
+            <Setter Property="Width" Value="200px"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="TextAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Margin" Value="0,13,0,0"/>
+            <Setter Property="Padding" Value="3,13,3,3"/>
+            <Setter Property="TextWrapping" Value="NoWrap"/>
+        </Style>
+
+        <!-- zakladka domyslna -->
+        <Style TargetType="TabItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border Name="Border" BorderThickness="1, 1, 1, 0" Padding="5, 0, 5, 0" Margin="1, 0, 1, -1">
+                            <ContentPresenter x:Name="ContentSite"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Center"
+                                              ContentSource="Header"
+                                              Margin="10,4"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#F5F6F7" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#E0E0E0"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter TargetName="Border" Property="Background" Value="White"/>
+                                <Setter TargetName="Border" Property="Margin" Value="1, 0, 1, 0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Data grid -->
+        <Style TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+        </Style>
+        
+        <!-- Data grid Row -->
+        <Style TargetType="DataGridRow">
+            <Setter Property="MinHeight" Value="23px"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E7F3FE"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#D1E7FD"/>
+                    <Setter Property="BorderBrush" Value="#B3D8FB"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- DataGrid Cell -->
+        <Style TargetType="DataGridCell">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Grid>
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#D1E7FD"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+                <!--<Trigger Property="IsReadOnly" Value="True">
+                    <Setter Property="Foreground" Value="#5F5F5F"/>
+                </Trigger>-->
+            </Style.Triggers>
+        </Style>
     </Application.Resources>
 </Application>

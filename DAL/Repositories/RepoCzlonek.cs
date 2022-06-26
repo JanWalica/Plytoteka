@@ -45,7 +45,7 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Edytuj(Czlonek czlonek, sbyte idArtysty, sbyte idZespolu)
+        public static bool Edytuj(Czlonek czlonek, ushort idArtysty, ushort idZespolu)
         {
             bool stan = false;
 
@@ -63,7 +63,7 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Usun(sbyte id)
+        public static bool Usun(ushort id)
         {
             return true;
         }

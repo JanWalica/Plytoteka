@@ -15,7 +15,7 @@ namespace Plytoteka.DAL.Repositories
         #endregion
 
         #region CRUD
-        public static List<Artysta> PobierzWszysto()
+        public static List<Artysta> PobierzWszystko()
         {
             List<Artysta> artysci = new List<Artysta>();
 
@@ -41,13 +41,13 @@ namespace Plytoteka.DAL.Repositories
                 connection.Open();
                 var id = command.ExecuteNonQuery();
                 stan = true;
-                artysta.Id = (sbyte)command.LastInsertedId;
+                artysta.Id = (ushort)command.LastInsertedId;
                 connection.Close();
             }
             return stan;
         }
 
-        public static bool Edytuj(Artysta artysta, sbyte id)
+        public static bool Edytuj(Artysta artysta, ushort id)
         {
             bool stan = false;
 
@@ -65,7 +65,7 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Usun(sbyte id)
+        public static bool Usun(ushort id)
         {
             return true;
         }

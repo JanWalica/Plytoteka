@@ -11,6 +11,7 @@ namespace Plytoteka.DAL.Repositories
         #region zapytania
         private const string WSZYSTKO = "SELECT * FROM utwory";
         private const string DODAJ = "INSERT INTO 'utwory' ('tytul', 'autor_tekstu', 'jezyk') VALUES ";
+        private const string USUN = 
         #endregion
 
         #region CRUD
@@ -40,13 +41,13 @@ namespace Plytoteka.DAL.Repositories
                 connection.Open();
                 var id = command.ExecuteNonQuery();
                 stan = true;
-                utwor.Id = (sbyte)command.LastInsertedId;
+                utwor.Id = (ushort)command.LastInsertedId;
                 connection.Close();
             }
             return stan;
         }
 
-        public static bool Edytuj(Utwor utwor, sbyte id)
+        public static bool Edytuj(Utwor utwor, ushort id)
         {
             bool stan = false;
 
@@ -64,7 +65,7 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Usun(sbyte id)
+        public static bool Usun(ushort id)
         {
             return true;
         }

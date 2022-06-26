@@ -3,39 +3,46 @@ using Plytoteka.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 
 namespace Plytoteka.DAL.Entities
 {
     class Album : ICRUDStrings
     {
         #region wlasnosci
-        public sbyte? Id { get; set; }
-        public sbyte Zespol { get; set; }
+        public ushort? Id { get; set; }
+        public ushort? ZespolId { get; set; }
+        public string? Zespol { get; set; }
         public string Tytul { get; set; }
-        public int DataWydania { get; set; }
-        public int? Dlugosc { get; set; }
+        public int? DataWydania { get; set; }
+        public string? Dlugosc { get; set; }
         public int? IleUtworow { get; set; }
-        public string Wydawca { get; set; }
-        public TypAlbumu Typ { get; set; }
+        public string? Wydawca { get; set; }
+        public TypAlbumu? Typ { get; set; }
         #endregion
 
         #region konstruktory
         public Album(MySqlDataReader reader)
         {
-            Id = sbyte.Parse(reader["id_albumu"].ToString());
-            Zespol = sbyte.Parse(reader["id_zespolu1"].ToString());
+            Id = ushort.Parse(reader["id_albumu"].ToString());
+            ZespolId = ushort.TryParse(reader["id_zespolu1"].ToString(), out var z) ? z : default;
+            Zespol = reader["nazwa"]?.ToString();
             Tytul = reader["tytul"].ToString();
-            DataWydania = int.Parse(reader["data_wyd"].ToString());
-            Dlugosc = int.Parse(reader["dlugosc"].ToString());
-            IleUtworow = int.Parse(reader["ile_utworow"].ToString());
-            Wydawca = reader["wydawca"].ToString();
-            Typ = (TypAlbumu)Enum.Parse(typeof(TypAlbumu), reader["typ"].ToString().Trim().ToLower().Replace(" ", "_"));
+            DataWydania = int.TryParse(reader["data_wyd"].ToString(), out var dw) ? dw : default;
+
+            double seconds = int.TryParse(reader["dlugosc"].ToString(), out var d) ? d : default;
+            TimeSpan time = TimeSpan.FromSeconds(seconds);
+            Dlugosc = time.ToString(@"hh\:mm\:ss");
+
+            IleUtworow = int.TryParse(reader["ile_utworow"].ToString(), out var iu) ? iu : default;
+            Wydawca = reader["wydawca"]?.ToString();
+            Typ = (TypAlbumu?)(Enum.TryParse(typeof(TypAlbumu), reader["typ"].ToString().Trim().ToLower().Replace(" ", "_"), out var t) ? t : default);
         }
 
-        public Album(sbyte zespol, string tytul, int dataWydania, string wydawca, TypAlbumu typ)
+        public Album(ushort? zespol, string tytul, int? dataWydania, string wydawca, TypAlbumu? typ)
         {
             Id = null;
-            Zespol = zespol;
+            ZespolId = zespol;
             Tytul = tytul;
             DataWydania = dataWydania;
             Dlugosc = null;
@@ -47,7 +54,7 @@ namespace Plytoteka.DAL.Entities
         public Album(Album album)
         {
             Id = album.Id;
-            Zespol = album.Zespol;
+            ZespolId = album.ZespolId;
             Tytul = album.Tytul;
             DataWydania = album.DataWydania;
             Dlugosc = album.Dlugosc;
@@ -65,27 +72,27 @@ namespace Plytoteka.DAL.Entities
 
         public string ToInsert()
         {
-            return $"('{Zespol}', " +
+            return $"('{ZespolId}', " +
                 $"'{Tytul}', " +
                 $"'{DataWydania}', " +
                 $"'{Wydawca}', " +
-                $"'{Typ.GetDisplayName()}')";
+                $"'{Typ?.GetDisplayName()}')";
         }
 
         public string ToUpdate()
         {
-            return $"id_zespolu1='{Zespol}', " +
+            return $"id_zespolu1='{ZespolId}', " +
                 $"tytul='{Tytul}', " +
                 $"data_wyd='{DataWydania}', " +
                 $"wydawca='{Wydawca}', " +
-                $"typ='{Typ.GetDisplayName()}'";
+                $"typ='{Typ?.GetDisplayName()}'";
         }
 
         public override bool Equals(object obj)
         {
             var album = obj as Album;
             if (album is null) return false;
-            if (Zespol != album.Zespol) return false;
+            if (ZespolId != album.ZespolId) return false;
             if (Tytul.ToLower() != album.Tytul.ToLower()) return false;
             if (DataWydania != album.DataWydania) return false;
             if (Dlugosc != album.Dlugosc) return false;

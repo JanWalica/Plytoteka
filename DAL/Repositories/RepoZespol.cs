@@ -14,7 +14,7 @@ namespace Plytoteka.DAL.Repositories
         #endregion
 
         #region CRUD
-        public static List<Zespol> PobierzWszysto()
+        public static List<Zespol> PobierzWszystko()
         {
             List<Zespol> zespoly = new List<Zespol>();
 
@@ -24,7 +24,7 @@ namespace Plytoteka.DAL.Repositories
                 connection.Open();
                 var reader = command.ExecuteReader();
                 while (reader.Read())
-                    zespoly.Add(new Album(reader));
+                    zespoly.Add(new Zespol(reader));
                 connection.Close();
             }
             return zespoly;
@@ -40,13 +40,13 @@ namespace Plytoteka.DAL.Repositories
                 connection.Open();
                 var id = command.ExecuteNonQuery();
                 stan = true;
-                zespol.Id = (sbyte)command.LastInsertedId;
+                zespol.Id = (ushort)command.LastInsertedId;
                 connection.Close();
             }
             return stan;
         }
 
-        public static bool Edytuj(Zespol zespol, sbyte id)
+        public static bool Edytuj(Zespol zespol, ushort id)
         {
             bool stan = false;
 
@@ -64,7 +64,7 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Usun(sbyte id)
+        public static bool Usun(ushort id)
         {
             return true;
         }

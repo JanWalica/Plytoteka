@@ -3,11 +3,399 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:Plytoteka"
+        xmlns:vm="clr-namespace:Plytoteka.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    
-    <Grid>
+        Title="Płytoteka" Height="600" Width="800">
 
+    <Window.Resources>
+        <vm:MainViewModel x:Key="mainVM"/>
+    </Window.Resources>
+
+    <Grid DataContext="{StaticResource mainVM}">
+        <TabControl>
+            <!-- Zakladka Albumow -->
+            <TabItem x:Name="tab_albumy" Header="Albumy" Margin="0,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40px"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel x:Name="sp_albumy_lewy" Style="{StaticResource gray}"
+                                Grid.Column="0"
+                                Orientation="Horizontal" MinWidth="1"
+                                >
+                        <Button Content="Odśwież"
+                                Command="{Binding AlbumyLista.ZaladujWszystkieAlbumy}"/>
+                        <!--<Button Style="{StaticResource on_off_fixed}"
+                                Content="Tryb edycji: wył."/>-->
+                    </StackPanel>
+                    <StackPanel x:Name="sp_albumy_prawy" Style="{StaticResource gray}"
+                                Grid.Column="1"
+                                Orientation="Horizontal" MinWidth="1" HorizontalAlignment="Right"
+                                >
+                        <Button Content="Czyść"
+                                Command="{Binding AlbumyLista.CzyscFormularz}"/>
+                        <Button Content="Dodaj"
+                                Command="{Binding AlbumyLista.DodajAlbum}"
+                                IsEnabled="{Binding AlbumyLista.DodawanieDostepne, Mode=OneWay}"/>
+                        <Button Content="Edytuj"
+                                Command="{Binding AlbumyLista.EdytujAlbum}"
+                                IsEnabled="{Binding AlbumyLista.EdycjaDostepna, Mode=OneWay}"/>
+                        <Button Content="Usuń"
+                                Command="{Binding AlbumyLista.UsunAlbum}"/>
+                        <!--<Button Style="{StaticResource on_off_fixed}"
+                                Content="Tryb edycji: wył."/>-->
+                    </StackPanel>
+
+                    <DataGrid x:Name="dg_albumy"
+                              Grid.Row="1"
+                              IsReadOnly="True"
+                              HorizontalScrollBarVisibility="Visible"
+                              ItemsSource="{Binding AlbumyLista.Albumy}"
+                              SelectedItem="{Binding AlbumyLista.BiezacyAlbum}"
+                              SelectedIndex="{Binding AlbumyLista.IndeksZaznaczonegoAlbumu, Mode=TwoWay}"
+                              >
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Tytul" Binding="{Binding Tytul}"/>
+                            <DataGridTextColumn Header="Zespol" Binding="{Binding Zespol}" 
+                                                IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Rok wydania" Binding="{Binding DataWydania}"/>
+                            <DataGridTextColumn Header="Długość" Binding="{Binding Dlugosc}" 
+                                                IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Utwory" Binding="{Binding IleUtworow}"
+                                                IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Wydawca" Binding="{Binding Wydawca}"/>
+                            <DataGridTextColumn Header="Typ" Binding="{Binding Typ}"/>
+                        </DataGrid.Columns>
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding AlbumyLista.PokazSzczegolyAlbumu}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </DataGrid>
+                    <Grid Grid.Row="1" Grid.Column="1"
+                          Style="{StaticResource szczegoly}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60px"/>
+                            <RowDefinition Height="40px"/>
+                            <RowDefinition Height="60px"/>
+                            <RowDefinition Height="60px"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!-- Tytul -->
+                        <TextBox Grid.Row="0" Name="tytul_albumu"
+                                 FontSize="18"
+                                 Text="{Binding AlbumyLista.Tytul}" TextAlignment="Center"
+                                 />
+                        <Label Grid.Row="0"
+                               Content="Tytuł"/>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="8*"/>
+                                <ColumnDefinition Width="5*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Zespol -->
+                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                <TextBlock Margin="0,0,10,0" Text="Zespół:"/>
+                                <ComboBox Name="zespol"
+                                      ItemsSource="{Binding AlbumyLista.Zespoly}"
+                                      SelectedValue="{Binding AlbumyLista.Zespol}"
+                                      SelectedIndex="{Binding AlbumyLista.IndeksZespolu}"
+                                      />
+                            </StackPanel>
+                            
+                            <!-- typ -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <TextBlock Margin="0,0,10,0" Text="Typ:"/>
+                                <ComboBox Name="typ"
+                                      ItemsSource="{Binding AlbumyLista.Typy}"
+                                      SelectedValue="{Binding AlbumyLista.Typ}"
+                                      SelectedIndex="{Binding AlbumyLista.IndeksTypu}"
+                                      />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Rok wydania -->
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="60px"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Name="rok_wydania" Grid.Column="0"
+                                         Text="{Binding AlbumyLista.DataWydania}" TextAlignment="Right"
+                                         Width="50px" Margin="0,10,5,10"
+                                         />
+                            <Label Grid.Column="0" Content="Rok"/>
+
+                            <!-- Wydawca -->
+                            <TextBox Name="wydawca" Grid.Column="1"
+                                     Text="{Binding AlbumyLista.Wydawca}" TextAlignment="Left"
+                                      Margin="5,10,0,10"
+                                         />
+                            <Label Grid.Column="1" Content="Wydawca"/>
+                        </Grid>
+                        
+                        <!-- Utwor -->
+
+                        <!-- Utwory lista -->
+                        <DataGrid x:Name="dg_lista_utworow"
+                              Grid.Row="4"
+                              IsReadOnly="True"
+                              ItemsSource="{Binding AlbumyLista.Skladowe}"
+                              SelectedItem="{Binding AlbumyLista.BiezacaSkladowa}"
+                              SelectedIndex="{Binding AlbumyLista.IndeksZaznaczonejSkladowej}"
+                              >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Tytul" Binding="{Binding Utwor}"/>
+                                <DataGridTextColumn Header="Długość" Binding="{Binding Dlugosc}"/>
+                                <DataGridTextColumn Header="Gatunek" Binding="{Binding Gatunek}"
+                                                        />
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="X"
+                                                    Margin="0"
+                                                    Padding="0"
+                                                    MinWidth="0"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                    
+                </Grid>
+            </TabItem>
+
+            <!-- Zakladka Artystow -->
+            <TabItem x:Name="tab_artysci" Header="Artyści">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40px"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ListView x:Name="lista_artysci" Grid.Row="1"
+                              SelectedItem="{Binding ArtysciLista.BiezacyArtysta}"
+                              ItemsSource="{Binding ArtysciLista.Artysci}"
+                              SelectedIndex="{Binding ArtysciLista.IndeksZaznaczonegoArtysty, Mode=TwoWay}"
+                              >
+                        <!--<i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding TabListaVM.ZaladujTelefony}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>-->
+                        <ListView.View>
+                            <GridView>
+                                <GridView.Columns>
+                                    <GridViewColumn Width="150" x:Name="kolumna_imie">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Imie}" FontSize="14"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                        <GridViewColumn.Header>
+                                            <TextBlock Text="Imię" Background="AliceBlue" Width="{Binding ActualWidth, ElementName=kolumna_Nazwisko}" >
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="MouseDown">
+                                                        <i:InvokeCommandAction Command="{Binding TabListaVM.ZaladujWszystkieOsoby}"/>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </TextBlock>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+
+                                    <GridViewColumn>
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Nazwisko}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                        <GridViewColumn.Header>
+                                            <TextBlock Text="Nazwisko"></TextBlock>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+
+                                    <GridViewColumn >
+                                        <GridViewColumn.CellTemplate >
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Pseudonim}"  HorizontalAlignment="Stretch"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                        <GridViewColumn.Header>
+                                            <TextBlock Text="Pseudonim"></TextBlock>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+
+                                    <GridViewColumn >
+                                        <GridViewColumn.CellTemplate >
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding DataUr}"  HorizontalAlignment="Stretch"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                        <GridViewColumn.Header>
+                                            <TextBlock Text="Data urodzenia"></TextBlock>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+
+                                    <GridViewColumn >
+                                        <GridViewColumn.CellTemplate >
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding StartKariery}"  HorizontalAlignment="Stretch"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                        <GridViewColumn.Header>
+                                            <TextBlock Text="Początek kariery"></TextBlock>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+                                </GridView.Columns>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </TabItem>
+
+            <!-- Zakladka Utworow -->
+            <TabItem x:Name="tab_utwory" Header="Utwory">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40px"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ListView x:Name="lista_utwory" Grid.Row="1"
+                              SelectedItem="{Binding UtworyLista.BiezacyUtwor}"
+                              ItemsSource="{Binding UtworyLista.Utwory}"
+                              SelectedIndex="{Binding UtworyLista.IndeksZaznaczonegoUtworu, Mode=TwoWay}"
+                              >
+                        <!--<i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding TabListaVM.ZaladujTelefony}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>-->
+                        <ListView.View>
+                            <GridView>
+                                <GridView.Columns>
+                                    <GridViewColumn Width="150" x:Name="kolumna_utwor_tytul">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Tytul}" FontSize="14"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                        <GridViewColumn.Header>
+                                            <TextBlock Text="Tytul" Background="AliceBlue" Width="{Binding ActualWidth, ElementName=kolumna_Nazwisko}" >
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="MouseDown">
+                                                        <i:InvokeCommandAction Command="{Binding TabListaVM.ZaladujWszystkieOsoby}"/>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </TextBlock>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+
+                                    <GridViewColumn>
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Autor}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                        <GridViewColumn.Header>
+                                            <TextBlock Text="Autor"></TextBlock>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+
+                                    <GridViewColumn >
+                                        <GridViewColumn.CellTemplate >
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Jezyk}"  HorizontalAlignment="Stretch"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                        <GridViewColumn.Header>
+                                            <TextBlock Text="Język"></TextBlock>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+                                </GridView.Columns>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </TabItem>
+
+            <!-- Zakladka Zespolow -->
+            <TabItem x:Name="tab_zespoly" Header="Zespoły">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40px"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ListView x:Name="lista_zespoly" Grid.Row="1"
+                              SelectedItem="{Binding ZespolyLista.BiezacyZespol}"
+                              ItemsSource="{Binding ZespolyLista.Zespoly}"
+                              SelectedIndex="{Binding ZespolyLista.IndeksZaznaczonegoZespolu, Mode=TwoWay}"
+                              >
+                        <!--<i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding TabListaVM.ZaladujTelefony}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>-->
+                        <ListView.View>
+                            <GridView>
+                                <GridView.Columns>
+                                    <GridViewColumn Width="150" x:Name="kolumna_Nazwa">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Nazwa}" FontSize="14"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                        <GridViewColumn.Header>
+                                            <TextBlock Text="Nazwa" Background="AliceBlue" Width="{Binding ActualWidth, ElementName=kolumna_Nazwisko}" >
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="MouseDown">
+                                                        <i:InvokeCommandAction Command="{Binding TabListaVM.ZaladujWszystkieOsoby}"/>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </TextBlock>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+
+                                    <GridViewColumn>
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding DataZalozenia}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                        <GridViewColumn.Header>
+                                            <TextBlock Text="Data założenia"></TextBlock>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+
+                                    <GridViewColumn >
+                                        <GridViewColumn.CellTemplate >
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Pochodzenie}"  HorizontalAlignment="Stretch"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                        <GridViewColumn.Header>
+                                            <TextBlock Text="Pochodzenie"></TextBlock>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+                                </GridView.Columns>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        
     </Grid>
+    
+    
 </Window>

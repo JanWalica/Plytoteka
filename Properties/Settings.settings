@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="server" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">localhost</Value>
+      <Value Profile="(Default)">10.211.55.2</Value>
     </Setting>
     <Setting Name="database" Type="System.String" Scope="Application">
       <Value Profile="(Default)">plytoteka</Value>

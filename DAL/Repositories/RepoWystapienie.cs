@@ -14,7 +14,7 @@ namespace Plytoteka.DAL.Repositories
         #endregion
 
         #region CRUD
-        public static List<Wystapienie> PobierzWszysto()
+        public static List<Wystapienie> PobierzWszystko()
         {
             List<Wystapienie> wystapienia = new List<Wystapienie>();
 
@@ -45,7 +45,7 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Edytuj(Wystapienie wystapienie, sbyte idArtysty, sbyte idAlbumu)
+        public static bool Edytuj(Wystapienie wystapienie, ushort idArtysty, ushort idAlbumu)
         {
             bool stan = false;
 
@@ -63,7 +63,7 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Usun(sbyte id)
+        public static bool Usun(ushort id)
         {
             return true;
         }
