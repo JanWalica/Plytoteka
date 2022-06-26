@@ -10,8 +10,9 @@ namespace Plytoteka.DAL.Repositories
     {
         #region zapytania
         private const string WSZYSTKO = "SELECT * FROM artysci";
-        private const string DODAJ = "INSERT INTO 'artysci'" +
-            "('imie', 'nazwisko', 'pseudonim', 'data_ur', pocz_kariery') VALUES ";
+        private const string DODAJ = "INSERT INTO artysci" +
+            "(imie, nazwisko, pseudonim, data_ur, pocz_kariery) VALUES ";
+        private const string USUN = "DELETE FROM artysci WHERE id_artysty=";
         #endregion
 
         #region CRUD
@@ -65,9 +66,20 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Usun(ushort id)
+        public static bool Usun(ushort? id)
         {
-            return true;
+            bool stan = false;
+
+            using (var connection = DBConnection.Instance.Connection)
+            {
+                MySqlCommand command = new MySqlCommand($"{USUN} {id}", connection);
+                connection.Open();
+                var n = command.ExecuteNonQuery();
+                if (n == 1) stan = true;
+
+                connection.Close();
+            }
+            return stan;
         }
         #endregion
     }

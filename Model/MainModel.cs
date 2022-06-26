@@ -50,6 +50,7 @@ namespace Plytoteka.Model
         }
 
         #region metody
+        #region ALBUMY / SKLADOWE
         public void OdswiezAlbumy()
         {
             Albumy = new ObservableCollection<Album>();
@@ -181,6 +182,97 @@ namespace Plytoteka.Model
             }
             return false;
         }
+        #endregion
+
+        #region ARTYSCI
+        public void OdswiezArtystow()
+        {
+            Artysci = new ObservableCollection<Artysta>();
+            var artysci = RepoArtysta.PobierzWszystko();
+            foreach (var a in artysci)
+                Artysci.Add(a);
+        }
+
+        public bool CzyArtystaJestJuzWRepozytorium(Artysta artysta) => Artysci.Contains(artysta);
+        public bool DodajArtysteDoBazy(Artysta artysta)
+        {
+            if (!CzyArtystaJestJuzWRepozytorium(artysta))
+            {
+                if (RepoArtysta.Dodaj(artysta))
+                {
+                    Artysci.Add(artysta);
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool EdytujArtysteWBazie(Artysta artysta, ushort idArtysty)
+        {
+            if (RepoArtysta.Edytuj(artysta, idArtysty))
+            {
+                for (int i = 0; i < Albumy.Count; i++)
+                {
+                    if (Artysci[i].Id == idArtysty)
+                    {
+                        artysta.Id = idArtysty;
+                        Artysci[i] = new Artysta(artysta);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public bool UsunArtysteZBazy(ushort? idArtysty)
+        {
+            // Usun wystapienia artyscty
+            foreach (var wystapienie in Wystapienia)
+            {
+                if (wystapienie.Artysta == idArtysty)
+                {
+                    if (RepoWystapienie.UsunPoArtyscie(idArtysty))
+                    {
+                        for (int i = 0; i < Wystapienia.Count; i++)
+                        {
+                            if (Wystapienia[i].Artysta == idArtysty)
+                            {
+                                Wystapienia.RemoveAt(i);
+                            }
+                        }
+                    }
+                }
+            }
+            // Usun czlonkow zespolu
+            foreach (var czlonek in Czlonkowie)
+            {
+                if (czlonek.Artysta == idArtysty)
+                {
+                    if (RepoCzlonek.UsunPoArtyscie(idArtysty))
+                    {
+                        for (int i = 0; i < Wystapienia.Count; i++)
+                        {
+                            if (Czlonkowie[i].Artysta == idArtysty)
+                            {
+                                Czlonkowie.RemoveAt(i);
+                            }
+                        }
+                    }
+                }
+            }
+            // Usun artyste
+            if (RepoArtysta.Usun(idArtysty))
+            {
+                for (int i = 0; i < Artysci.Count; i++)
+                {
+                    if (Artysci[i].Id == idArtysty)
+                    {
+                        Artysci.RemoveAt(i);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        #endregion
 
         #endregion
     }

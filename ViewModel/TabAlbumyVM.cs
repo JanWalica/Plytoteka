@@ -483,6 +483,7 @@ namespace Plytoteka.ViewModel
                         ZespolId = Zespoly[indeksZespolu].Id;
                         model.EdytujAlbumWBazie(new Album(ZespolId, Tytul, DataWydania, Wydawca, Typ), BiezacyAlbum.Id);
                         OdswiezAlbumy();
+                        CzyscSzczegoly();
                     }
                          ,
                     arg => (BiezacyAlbum?.Zespol != Zespol) || (BiezacyAlbum?.Tytul != Tytul) || (BiezacyAlbum?.DataWydania != DataWydania) || (BiezacyAlbum?.Wydawca != Wydawca) || (BiezacyAlbum?.Typ != Typ)

@@ -12,7 +12,7 @@ namespace Plytoteka.DAL.Entities
         public string Imie { get; set; }
         public string Nazwisko { get; set; }
         public string? Pseudonim { get; set; }
-        public DateTime DataUr { get; set; }
+        public string DataUr { get; set; }
         public int? StartKariery { get; set; }
         #endregion
 
@@ -23,16 +23,16 @@ namespace Plytoteka.DAL.Entities
             Imie = reader["imie"].ToString();
             Nazwisko = reader["nazwisko"].ToString();
             Pseudonim = reader["pseudonim"]?.ToString();
-            DataUr = DateTime.Parse(reader["data_ur"].ToString());
+            DataUr = DateTime.Parse(reader["data_ur"].ToString()).ToString("dd.MM.yyyy");
             StartKariery = int.TryParse(reader["pocz_kariery"].ToString(), out var sk) ? sk : default;
         }
 
-        public Artysta(string imie, string nazwisko, string? pseudonim, DateTime dataUr, int? startKariery)
+        public Artysta(string imie, string nazwisko, string? pseudonim, string dataUr, int? startKariery)
         {
             Id = null;
             Imie = imie.Trim();
             Nazwisko = nazwisko.Trim();
-            Pseudonim = pseudonim.Trim();
+            Pseudonim = pseudonim?.Trim();
             DataUr = dataUr;
             StartKariery = startKariery;
         }
@@ -51,12 +51,12 @@ namespace Plytoteka.DAL.Entities
         #region metody
         public override string ToString()
         {
-            return $"{Imie} {Nazwisko} \"{Pseudonim}\" ur. {DataUr:dd.MM.yyyy}, początek kariery: {StartKariery}";
+            return $"{Imie} {Nazwisko} \"{Pseudonim}\"";
         }
 
         public string ToInsert()
         {
-            return $"('{Imie}', '{Nazwisko}', '{Pseudonim}', '{DataUr:yyyy-MM-DD}', '{StartKariery}')";
+            return $"('{Imie}', '{Nazwisko}', '{Pseudonim}', STR_TO_DATE('{DataUr}', '%d.%m.%Y'), '{StartKariery}')";
         }
 
         public string ToUpdate()
@@ -64,7 +64,7 @@ namespace Plytoteka.DAL.Entities
             return $"imie='{Imie}', " +
                 $"nazwisko='{Nazwisko}', " +
                 $"pseudonim='{Pseudonim}', " +
-                $"data_ur='{DataUr:yyyy-MM-DD}', " +
+                $"data_ur=STR_TO_DATE('{DataUr}', '%d.%m.%Y'), " +
                 $"pocz_kariery='{StartKariery}'";
         }
 

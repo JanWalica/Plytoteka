@@ -10,7 +10,9 @@ namespace Plytoteka.DAL.Repositories
     {
         #region zapytania
         private const string WSZYSTKO = "SELECT * FROM wystapienia";
-        private const string DODAJ = "INSERT INTO 'wystapienia' ('id_artysty1', 'id_albumu') VALUES ";
+        private const string DODAJ = "INSERT INTO wystapienia (id_artysty1, id_albumu) VALUES ";
+        private const string USUN_PO_ARTYSCIE = "DELETE FROM wystapienia WHERE id_artysty1=";
+        private const string USUN_PO_ALBUMIE = "DELETE FROM wystapienia WHERE id_utworu=";
         #endregion
 
         #region CRUD
@@ -63,9 +65,54 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Usun(ushort id)
+        public static bool Usun(ushort? idArtysty, ushort? idAlbumu)
         {
-            return true;
+            bool stan = false;
+
+            using (var connection = DBConnection.Instance.Connection)
+            {
+                string USUN = $"DELETE FROM wystapienia WHERE id_artysty1={idArtysty} AND id_albumu={idAlbumu}";
+                MySqlCommand command = new MySqlCommand(USUN, connection);
+                connection.Open();
+                var n = command.ExecuteNonQuery();
+                if (n == 1) stan = true;
+
+                connection.Close();
+            }
+            return stan;
+        }
+
+        public static bool UsunPoArtyscie(ushort? id)
+        {
+            bool stan = false;
+
+            using (var connection = DBConnection.Instance.Connection)
+            {
+                MySqlCommand command = new MySqlCommand($"{USUN_PO_ARTYSCIE} {id}", connection);
+                connection.Open();
+                var n = command.ExecuteNonQuery();
+                if (n == 1) stan = true;
+
+                connection.Close();
+            }
+            return stan;
+        }
+
+
+        public static bool UsunPoAlbumie(ushort? id)
+        {
+            bool stan = false;
+
+            using (var connection = DBConnection.Instance.Connection)
+            {
+                MySqlCommand command = new MySqlCommand($"{USUN_PO_ALBUMIE} {id}", connection);
+                connection.Open();
+                var n = command.ExecuteNonQuery();
+                if (n == 1) stan = true;
+
+                connection.Close();
+            }
+            return stan;
         }
         #endregion
     }

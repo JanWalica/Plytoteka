@@ -217,89 +217,124 @@
             </TabItem>
 
             <!-- Zakladka Artystow -->
-            <TabItem x:Name="tab_artysci" Header="Artyści">
+            <TabItem x:Name="tab_artysci" Header="Artyści" Margin="0,0,0,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40px"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <ListView x:Name="lista_artysci" Grid.Row="1"
-                              SelectedItem="{Binding ArtysciLista.BiezacyArtysta}"
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Style="{StaticResource gray}"
+                                Grid.Column="0"
+                                Orientation="Horizontal" MinWidth="1"
+                                >
+                        <Button Content="Odśwież"
+                                Command="{Binding ArtysciLista.ZaladujWszystkichArtystow}"/>
+                        <!--<Button Style="{StaticResource on_off_fixed}"
+                                Content="Tryb edycji: wył."/>-->
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource gray}"
+                                Grid.Column="1"
+                                Orientation="Horizontal" MinWidth="1" HorizontalAlignment="Right"
+                                >
+                        <Button Content="Czyść"
+                                Command="{Binding ArtysciLista.CzyscFormularz}"/>
+                        <Button Content="Dodaj"
+                                Command="{Binding ArtysciLista.DodajArtyste}"
+                                IsEnabled="{Binding ArtysciLista.DodawanieDostepne, Mode=OneWay}"/>
+                        <Button Content="Edytuj"
+                                Command="{Binding ArtysciLista.EdytujArtyste}"
+                                IsEnabled="{Binding ArtysciLista.EdycjaDostepna, Mode=OneWay}"/>
+                        <Button Content="Usuń"
+                                Command="{Binding ArtysciLista.UsunArtyste}"/>
+                        <!--<Button Style="{StaticResource on_off_fixed}"
+                                Content="Tryb edycji: wył."/>-->
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1"
+                              IsReadOnly="True"
+                              HorizontalScrollBarVisibility="Visible"
                               ItemsSource="{Binding ArtysciLista.Artysci}"
+                              SelectedItem="{Binding ArtysciLista.BiezacyArtysta}"
                               SelectedIndex="{Binding ArtysciLista.IndeksZaznaczonegoArtysty, Mode=TwoWay}"
                               >
-                        <!--<i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding TabListaVM.ZaladujTelefony}"/>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Imię" Binding="{Binding Imie}"/>
+                            <DataGridTextColumn Header="Nazwisko" Binding="{Binding Nazwisko}"/>
+                            <DataGridTextColumn Header="Pseudonim" Binding="{Binding Pseudonim}"/>
+                            <DataGridTextColumn Header="Data urodzenia" Binding="{Binding DataUr}"/>
+                            <DataGridTextColumn Header="Początek kariery" Binding="{Binding StartKariery}"/>
+                        </DataGrid.Columns>
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding ArtysciLista.PokazSzczegolyArtysty}"/>
                             </i:EventTrigger>
-                        </i:Interaction.Triggers>-->
-                        <ListView.View>
-                            <GridView>
-                                <GridView.Columns>
-                                    <GridViewColumn Width="150" x:Name="kolumna_imie">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Imie}" FontSize="14"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                        <GridViewColumn.Header>
-                                            <TextBlock Text="Imię" Background="AliceBlue" Width="{Binding ActualWidth, ElementName=kolumna_Nazwisko}" >
-                                                <i:Interaction.Triggers>
-                                                    <i:EventTrigger EventName="MouseDown">
-                                                        <i:InvokeCommandAction Command="{Binding TabListaVM.ZaladujWszystkieOsoby}"/>
-                                                    </i:EventTrigger>
-                                                </i:Interaction.Triggers>
-                                            </TextBlock>
-                                        </GridViewColumn.Header>
-                                    </GridViewColumn>
+                        </i:Interaction.Triggers>
+                    </DataGrid>
+                    <Grid Grid.Row="1" Grid.Column="1"
+                          Style="{StaticResource szczegoly}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60px"/>
+                            <RowDefinition Height="60px"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                                    <GridViewColumn>
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Nazwisko}" />
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                        <GridViewColumn.Header>
-                                            <TextBlock Text="Nazwisko"></TextBlock>
-                                        </GridViewColumn.Header>
-                                    </GridViewColumn>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Imie -->
+                            <TextBox Grid.Column="0"
+                                 FontSize="18" Margin="0,10,5,10"
+                                 Text="{Binding ArtysciLista.Imie}" TextAlignment="Center"
+                                 />
+                            <Label Grid.Column="0"
+                               Content="Imię"/>
 
-                                    <GridViewColumn >
-                                        <GridViewColumn.CellTemplate >
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Pseudonim}"  HorizontalAlignment="Stretch"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                        <GridViewColumn.Header>
-                                            <TextBlock Text="Pseudonim"></TextBlock>
-                                        </GridViewColumn.Header>
-                                    </GridViewColumn>
+                            <!-- Nazwisko -->
+                            <TextBox Grid.Column="1"
+                                 FontSize="18" Margin="5,10,5,10"
+                                 Text="{Binding ArtysciLista.Nazwisko}" TextAlignment="Center"
+                                 />
+                            <Label Grid.Column="1"
+                               Content="Nazwisko"/>
+                        </Grid>
+                        
 
-                                    <GridViewColumn >
-                                        <GridViewColumn.CellTemplate >
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding DataUr}"  HorizontalAlignment="Stretch"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                        <GridViewColumn.Header>
-                                            <TextBlock Text="Data urodzenia"></TextBlock>
-                                        </GridViewColumn.Header>
-                                    </GridViewColumn>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="7*"/>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="3*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Pseudonim -->
+                            <TextBox Grid.Column="0"
+                                         Text="{Binding ArtysciLista.Pseudonim}" TextAlignment="Left"
+                                         Margin="0,10,5,10"
+                                         />
+                            <Label Grid.Column="0" Content="Pseudonim"/>
 
-                                    <GridViewColumn >
-                                        <GridViewColumn.CellTemplate >
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding StartKariery}"  HorizontalAlignment="Stretch"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                        <GridViewColumn.Header>
-                                            <TextBlock Text="Początek kariery"></TextBlock>
-                                        </GridViewColumn.Header>
-                                    </GridViewColumn>
-                                </GridView.Columns>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                            <!-- Data urodzenia -->
+                            <TextBox Grid.Column="1"
+                                     Text="{Binding ArtysciLista.DataUr}" TextAlignment="Left"
+                                      Margin="5,10,0,10"
+                                         />
+                            <Label Grid.Column="1" Content="Data ur."/>
+
+                            <!-- Pocz kariery -->
+                            <TextBox Grid.Column="2"
+                                     Text="{Binding ArtysciLista.StartKariery}" TextAlignment="Left"
+                                      Margin="5,10,0,10"
+                                         />
+                            <Label Grid.Column="2" Content="Pocz. kariery"/>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </TabItem>
 

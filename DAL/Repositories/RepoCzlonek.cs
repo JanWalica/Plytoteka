@@ -11,6 +11,8 @@ namespace Plytoteka.DAL.Repositories
         #region zapytania
         private const string WSZYSTKO = "SELECT * FROM czlonkowie";
         private const string DODAJ = "INSERT INTO 'czlonkowie' ('id_artysty', 'id_zespolu', 'pocz_wsp', 'koniec_wsp') VALUES ";
+        private const string USUN_PO_ARTYSCIE = "DELETE FROM wystapienia WHERE id_artysty=";
+        private const string USUN_PO_ZESPOLE = "DELETE FROM wystapienia WHERE id_zespolu=";
         #endregion
 
         #region CRUD
@@ -63,9 +65,54 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Usun(ushort id)
+        public static bool Usun(ushort? idAlbumu, ushort? idZespolu)
         {
-            return true;
+            bool stan = false;
+
+            using (var connection = DBConnection.Instance.Connection)
+            {
+                string USUN = $"DELETE FROM czlonkowie WHERE id_albumu={idAlbumu} AND id_utworu={idZespolu}";
+                MySqlCommand command = new MySqlCommand(USUN, connection);
+                connection.Open();
+                var n = command.ExecuteNonQuery();
+                if (n == 1) stan = true;
+
+                connection.Close();
+            }
+            return stan;
+        }
+
+        public static bool UsunPoArtyscie(ushort? id)
+        {
+            bool stan = false;
+
+            using (var connection = DBConnection.Instance.Connection)
+            {
+                MySqlCommand command = new MySqlCommand($"{USUN_PO_ARTYSCIE} {id}", connection);
+                connection.Open();
+                var n = command.ExecuteNonQuery();
+                if (n == 1) stan = true;
+
+                connection.Close();
+            }
+            return stan;
+        }
+
+
+        public static bool UsunPoZespole(ushort? id)
+        {
+            bool stan = false;
+
+            using (var connection = DBConnection.Instance.Connection)
+            {
+                MySqlCommand command = new MySqlCommand($"{USUN_PO_ZESPOLE} {id}", connection);
+                connection.Open();
+                var n = command.ExecuteNonQuery();
+                if (n == 1) stan = true;
+
+                connection.Close();
+            }
+            return stan;
         }
         #endregion
     }
