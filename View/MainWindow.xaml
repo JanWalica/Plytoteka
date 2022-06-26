@@ -339,67 +339,99 @@
             </TabItem>
 
             <!-- Zakladka Utworow -->
-            <TabItem x:Name="tab_utwory" Header="Utwory">
+            <TabItem x:Name="tab_utwory" Header="Utwory" Margin="0,0,0,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40px"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <ListView x:Name="lista_utwory" Grid.Row="1"
-                              SelectedItem="{Binding UtworyLista.BiezacyUtwor}"
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Style="{StaticResource gray}"
+                                Grid.Column="0"
+                                Orientation="Horizontal" MinWidth="1"
+                                >
+                        <Button Content="Odśwież"
+                                Command="{Binding UtworyLista.ZaladujWszystkieUtwory}"/>
+                        <!--<Button Style="{StaticResource on_off_fixed}"
+                                Content="Tryb edycji: wył."/>-->
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource gray}"
+                                Grid.Column="1"
+                                Orientation="Horizontal" MinWidth="1" HorizontalAlignment="Right"
+                                >
+                        <Button Content="Czyść"
+                                Command="{Binding UtworyLista.CzyscFormularz}"/>
+                        <Button Content="Dodaj"
+                                Command="{Binding UtworyLista.DodajUtwor}"
+                                IsEnabled="{Binding UtworyLista.DodawanieDostepne, Mode=OneWay}"/>
+                        <Button Content="Edytuj"
+                                Command="{Binding UtworyLista.EdytujUtwor}"
+                                IsEnabled="{Binding UtworyLista.EdycjaDostepna, Mode=OneWay}"/>
+                        <Button Content="Usuń"
+                                Command="{Binding UtworyLista.UsunUtwor}"/>
+                        <!--<Button Style="{StaticResource on_off_fixed}"
+                                Content="Tryb edycji: wył."/>-->
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1"
+                              IsReadOnly="True"
+                              HorizontalScrollBarVisibility="Visible"
                               ItemsSource="{Binding UtworyLista.Utwory}"
+                              SelectedItem="{Binding UtworyLista.BiezacyUtwor}"
                               SelectedIndex="{Binding UtworyLista.IndeksZaznaczonegoUtworu, Mode=TwoWay}"
                               >
-                        <!--<i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding TabListaVM.ZaladujTelefony}"/>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Tytuł" Binding="{Binding Tytul}"/>
+                            <DataGridTextColumn Header="Autor" Binding="{Binding Autor}"/>
+                            <DataGridTextColumn Header="Język" Binding="{Binding Jezyk}"/>
+                        </DataGrid.Columns>
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding UtworyLista.PokazSzczegolyUtworu}"/>
                             </i:EventTrigger>
-                        </i:Interaction.Triggers>-->
-                        <ListView.View>
-                            <GridView>
-                                <GridView.Columns>
-                                    <GridViewColumn Width="150" x:Name="kolumna_utwor_tytul">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Tytul}" FontSize="14"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                        <GridViewColumn.Header>
-                                            <TextBlock Text="Tytul" Background="AliceBlue" Width="{Binding ActualWidth, ElementName=kolumna_Nazwisko}" >
-                                                <i:Interaction.Triggers>
-                                                    <i:EventTrigger EventName="MouseDown">
-                                                        <i:InvokeCommandAction Command="{Binding TabListaVM.ZaladujWszystkieOsoby}"/>
-                                                    </i:EventTrigger>
-                                                </i:Interaction.Triggers>
-                                            </TextBlock>
-                                        </GridViewColumn.Header>
-                                    </GridViewColumn>
+                        </i:Interaction.Triggers>
+                    </DataGrid>
+                    <Grid Grid.Row="1" Grid.Column="1"
+                          Style="{StaticResource szczegoly}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60px"/>
+                            <RowDefinition Height="60px"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                                    <GridViewColumn>
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Autor}" />
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                        <GridViewColumn.Header>
-                                            <TextBlock Text="Autor"></TextBlock>
-                                        </GridViewColumn.Header>
-                                    </GridViewColumn>
+                        <TextBox Grid.Row="0"
+                                 FontSize="18" Margin="0,10,5,10"
+                                 Text="{Binding UtworyLista.Tytul}" TextAlignment="Center"
+                                 />
+                        <Label Grid.Column="0"
+                               Content="Tytul"/>
 
-                                    <GridViewColumn >
-                                        <GridViewColumn.CellTemplate >
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Jezyk}"  HorizontalAlignment="Stretch"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                        <GridViewColumn.Header>
-                                            <TextBlock Text="Język"></TextBlock>
-                                        </GridViewColumn.Header>
-                                    </GridViewColumn>
-                                </GridView.Columns>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Pseudonim -->
+                            <TextBox Grid.Column="0"
+                                         Text="{Binding UtworyLista.Autor}" TextAlignment="Left"
+                                         Margin="0,10,5,10"
+                                         />
+                            <Label Grid.Column="0" Content="Autor"/>
+
+                            <!-- Data urodzenia -->
+                            <TextBox Grid.Column="1"
+                                     Text="{Binding UtworyLista.Jezyk}" TextAlignment="Left"
+                                      Margin="5,10,0,10"
+                                         />
+                            <Label Grid.Column="1" Content="Jęyk"/>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </TabItem>
 

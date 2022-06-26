@@ -274,6 +274,78 @@ namespace Plytoteka.Model
         }
         #endregion
 
+        #region UTWORY
+        public void OdswiezUtwory()
+        {
+            Utwory = new ObservableCollection<Utwor>();
+            var utwory = RepoUtwor.PobierzWszystko();
+            foreach (var u in utwory)
+                Utwory.Add(u);
+        }
+
+        public bool CzyUtworJestJuzWRepozytorium(Utwor utwor) => Utwory.Contains(utwor);
+        public bool DodajUtworDoBazy(Utwor utwor)
+        {
+            if (!CzyUtworJestJuzWRepozytorium(utwor))
+            {
+                if (RepoUtwor.Dodaj(utwor))
+                {
+                    Utwory.Add(utwor);
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool EdytujUtworWBazie(Utwor utwor, ushort idUtworu)
+        {
+            if (RepoUtwor.Edytuj(utwor, idUtworu))
+            {
+                for (int i = 0; i < Utwory.Count; i++)
+                {
+                    if (Utwory[i].Id == idUtworu)
+                    {
+                        utwor.Id = idUtworu;
+                        Utwory[i] = new Utwor(utwor);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public bool UsunUtworZBazy(ushort? idUtworu)
+        {
+            // Usun skladowe
+            foreach (var skladowe in Skladowe)
+            {
+                if (skladowe.UtworId == idUtworu)
+                {
+                    if (RepoSkladowa.UsunPoUtworze(idUtworu))
+                    {
+                        for (int i = 0; i < Skladowe.Count; i++)
+                        {
+                            if (Skladowe[i].UtworId == idUtworu)
+                            {
+                                Skladowe.RemoveAt(i);
+                            }
+                        }
+                    }
+                }
+            }
+            // Usun utwor
+            if (RepoUtwor.Usun(idUtworu))
+            {
+                for (int i = 0; i < Utwory.Count; i++)
+                {
+                    if (Utwory[i].Id == idUtworu)
+                    {
+                        Utwory.RemoveAt(i);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        #endregion
         #endregion
     }
 }
