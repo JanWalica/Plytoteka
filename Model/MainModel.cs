@@ -244,13 +244,13 @@ namespace Plytoteka.Model
             // Usun czlonkow zespolu
             foreach (var czlonek in Czlonkowie)
             {
-                if (czlonek.Artysta == idArtysty)
+                if (czlonek.ArtystaId == idArtysty)
                 {
                     if (RepoCzlonek.UsunPoArtyscie(idArtysty))
                     {
                         for (int i = 0; i < Wystapienia.Count; i++)
                         {
-                            if (Czlonkowie[i].Artysta == idArtysty)
+                            if (Czlonkowie[i].ArtystaId == idArtysty)
                             {
                                 Czlonkowie.RemoveAt(i);
                             }
@@ -339,6 +339,130 @@ namespace Plytoteka.Model
                     if (Utwory[i].Id == idUtworu)
                     {
                         Utwory.RemoveAt(i);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        #endregion
+
+        #region ZESPOLY / CZLONKOWIE
+        public void OdswiezZespoly()
+        {
+            Zespoly = new ObservableCollection<Zespol>();
+            var zespoly = RepoZespol.PobierzWszystko();
+            foreach (var z in zespoly)
+                Zespoly.Add(z);
+        }
+
+        public void OdswiezCzlonkow()
+        {
+            Czlonkowie = new ObservableCollection<Czlonek>();
+            var czlonkowie = RepoCzlonek.PobierzWszystko();
+            foreach (var cz in czlonkowie)
+                Czlonkowie.Add(cz);
+        }
+
+        public ObservableCollection<Czlonek> PobierzCzlonkowZespolu(Zespol zespol)
+        {
+            var czlonkowie = new ObservableCollection<Czlonek>();
+            foreach (var czlonek in Czlonkowie)
+            {
+                if (czlonek.ZespolId == zespol.Id)
+                {
+                    czlonkowie.Add(czlonek);
+                }
+            }
+            return czlonkowie;
+        }
+
+        public bool CzyZespolJestJuzWRepozytorium(Zespol zespol) => Zespoly.Contains(zespol);
+        public bool DodajZespolDoBazy(Zespol zespol)
+        {
+            if (!CzyZespolJestJuzWRepozytorium(zespol))
+            {
+                if (RepoZespol.Dodaj(zespol))
+                {
+                    Zespoly.Add(zespol);
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool EdytujZespolWBazie(Zespol zespol, ushort idZespolu)
+        {
+            if (RepoZespol.Edytuj(zespol, idZespolu))
+            {
+                for (int i = 0; i < Zespoly.Count; i++)
+                {
+                    if (Zespoly[i].Id == idZespolu)
+                    {
+                        zespol.Id = idZespolu;
+                        Zespoly[i] = new Zespol(zespol);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public bool UsunZespolZBazy(ushort? idZespolu)
+        {
+            // Usun czlonkow zespolu
+            foreach (var czlonek in Czlonkowie)
+            {
+                if (czlonek.ZespolId == idZespolu)
+                {
+                    if (RepoCzlonek.UsunPoZespole(idZespolu))
+                    {
+                        for (int i = 0; i < Czlonkowie.Count; i++)
+                        {
+                            if (Czlonkowie[i].ZespolId == idZespolu)
+                            {
+                                Czlonkowie.RemoveAt(i);
+                            }
+                        }
+                    }
+                }
+            }
+            // Usun album
+            if (RepoZespol.Usun(idZespolu))
+            {
+                for (int i = 0; i < Zespoly.Count; i++)
+                {
+                    if (Zespoly[i].Id == idZespolu)
+                    {
+                        Zespoly.RemoveAt(i);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public bool CzyCzlonekJestJuzWRepozytorium(Czlonek czlonek) => Czlonkowie.Contains(czlonek);
+        public bool DodajCzlonkaDoBazy(Czlonek czlonek)
+        {
+            if (!CzyCzlonekJestJuzWRepozytorium(czlonek))
+            {
+                if (RepoCzlonek.Dodaj(czlonek))
+                {
+                    Czlonkowie.Add(czlonek);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool UsunCzlonkaZBazy(ushort? idArtysty, ushort idZespolu)
+        {
+            if (RepoCzlonek.Usun(idArtysty, idZespolu))
+            {
+                for (int i = 0; i < Czlonkowie.Count; i++)
+                {
+                    if (Czlonkowie[i].ArtystaId == idArtysty && Czlonkowie[i].ZespolId == idZespolu)
+                    {
+                        Czlonkowie.RemoveAt(i);
                     }
                 }
                 return true;

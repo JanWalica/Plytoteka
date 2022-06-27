@@ -201,7 +201,6 @@
                               Grid.Row="5"
                               IsReadOnly="True"
                               ItemsSource="{Binding AlbumyLista.Skladowe}"
-                              SelectedItem="{Binding AlbumyLista.BiezacaSkladowa}"
                               SelectedIndex="{Binding AlbumyLista.IndeksSkladowej}"
                               >
                             <DataGrid.Columns>
@@ -436,67 +435,162 @@
             </TabItem>
 
             <!-- Zakladka Zespolow -->
-            <TabItem x:Name="tab_zespoly" Header="Zespoły">
+            <TabItem x:Name="tab_zespoly" Header="Zespoly" Margin="0,0,0,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40px"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <ListView x:Name="lista_zespoly" Grid.Row="1"
-                              SelectedItem="{Binding ZespolyLista.BiezacyZespol}"
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Style="{StaticResource gray}"
+                                Grid.Column="0"
+                                Orientation="Horizontal" MinWidth="1"
+                                >
+                        <Button Content="Odśwież"
+                                Command="{Binding ZespolyLista.ZaladujWszystkieZespoly}"/>
+                        <!--<Button Style="{StaticResource on_off_fixed}"
+                                Content="Tryb edycji: wył."/>-->
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource gray}"
+                                Grid.Column="1"
+                                Orientation="Horizontal" MinWidth="1" HorizontalAlignment="Right"
+                                >
+                        <Button Content="Czyść"
+                                Command="{Binding ZespolyLista.CzyscFormularz}"/>
+                        <Button Content="Dodaj"
+                                Command="{Binding ZespolyLista.DodajZespol}"
+                                IsEnabled="{Binding ZespolyLista.DodawanieDostepne, Mode=OneWay}"/>
+                        <Button Content="Edytuj"
+                                Command="{Binding ZespolyLista.EdytujZespol}"
+                                IsEnabled="{Binding ZespolyLista.EdycjaDostepna, Mode=OneWay}"/>
+                        <Button Content="Usuń"
+                                Command="{Binding ZespolyLista.UsunZespol}"/>
+                        <!--<Button Style="{StaticResource on_off_fixed}"
+                                Content="Tryb edycji: wył."/>-->
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1"
+                              IsReadOnly="True"
+                              HorizontalScrollBarVisibility="Visible"
                               ItemsSource="{Binding ZespolyLista.Zespoly}"
+                              SelectedItem="{Binding ZespolyLista.BiezacyZespol}"
                               SelectedIndex="{Binding ZespolyLista.IndeksZaznaczonegoZespolu, Mode=TwoWay}"
                               >
-                        <!--<i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding TabListaVM.ZaladujTelefony}"/>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="nazwa" Binding="{Binding Nazwa}"/>
+                            <DataGridTextColumn Header="Data założenia" Binding="{Binding DataZalozenia}"/>
+                            <DataGridTextColumn Header="Pochodzenie" Binding="{Binding Pochodzenie}"/>
+                        </DataGrid.Columns>
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding ZespolyLista.PokazSzczegolyZespolu}"/>
                             </i:EventTrigger>
-                        </i:Interaction.Triggers>-->
-                        <ListView.View>
-                            <GridView>
-                                <GridView.Columns>
-                                    <GridViewColumn Width="150" x:Name="kolumna_Nazwa">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Nazwa}" FontSize="14"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                        <GridViewColumn.Header>
-                                            <TextBlock Text="Nazwa" Background="AliceBlue" Width="{Binding ActualWidth, ElementName=kolumna_Nazwisko}" >
-                                                <i:Interaction.Triggers>
-                                                    <i:EventTrigger EventName="MouseDown">
-                                                        <i:InvokeCommandAction Command="{Binding TabListaVM.ZaladujWszystkieOsoby}"/>
-                                                    </i:EventTrigger>
-                                                </i:Interaction.Triggers>
-                                            </TextBlock>
-                                        </GridViewColumn.Header>
-                                    </GridViewColumn>
+                        </i:Interaction.Triggers>
+                    </DataGrid>
+                    <Grid Grid.Row="1" Grid.Column="1"
+                          Style="{StaticResource szczegoly}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60px"/>
+                            <RowDefinition Height="60px"/>
+                            <RowDefinition Height="40px"/>
+                            <RowDefinition Height="60px"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                                    <GridViewColumn>
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding DataZalozenia}" />
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                        <GridViewColumn.Header>
-                                            <TextBlock Text="Data założenia"></TextBlock>
-                                        </GridViewColumn.Header>
-                                    </GridViewColumn>
+                        <!-- Tytul -->
+                        <TextBox Grid.Row="0"
+                                 FontSize="18"
+                                 Text="{Binding ZespolyLista.Nazwa}" TextAlignment="Center"
+                                 />
+                        <Label Grid.Row="0"
+                               Content="Nazwa zespołu"/>
 
-                                    <GridViewColumn >
-                                        <GridViewColumn.CellTemplate >
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Pochodzenie}"  HorizontalAlignment="Stretch"/>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                        <GridViewColumn.Header>
-                                            <TextBlock Text="Pochodzenie"></TextBlock>
-                                        </GridViewColumn.Header>
-                                    </GridViewColumn>
-                                </GridView.Columns>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="7*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Rok wydania -->
+                            <TextBox Grid.Column="0"
+                                         Text="{Binding ZespolyLista.DataZalozenia}" TextAlignment="Right"
+                                         Margin="0,10,5,10"
+                                         />
+                            <Label Grid.Column="0" Content="Rok zał."/>
+
+                            <!-- Wydawca -->
+                            <TextBox Grid.Column="1"
+                                     Text="{Binding ZespolyLista.Pochodzenie}" TextAlignment="Left"
+                                      Margin="5,10,0,10"
+                                         />
+                            <Label Grid.Column="1" Content="Pochodzenie"/>
+                        </Grid>
+
+                        <StackPanel Style="{StaticResource gray}"
+                                Grid.Row="2"
+                                Orientation="Horizontal" MinWidth="1" HorizontalAlignment="Left"
+                                >
+                            <!-- Dodaj utwor -->
+                            <Button Content="Dodaj artystę"
+                                IsEnabled="{Binding ZespolyLista.DodawanieArtystyDostepne}"
+                                Command="{Binding ZespolyLista.DodajCzlonka}"/>
+                            <!-- Dodaj utwor -->
+                            <Button Content="Usuń artystę"
+                                Command="{Binding ZespolyLista.UsunCzlonka}"/>
+
+                        </StackPanel>
+
+                        <!-- Utwor -->
+                        <Grid Grid.Row="3">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100px"/>
+                                <ColumnDefinition Width="100px"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Tytul -->
+                            <StackPanel Grid.Column="0" Orientation="Vertical">
+                                <TextBlock Margin="0,0,10,0" Text="Artysta:"/>
+                                <ComboBox
+                                      ItemsSource="{Binding ZespolyLista.Artysci}"
+                                      SelectedValue="{Binding ZespolyLista.CzlonekArtysta}"
+                                      SelectedIndex="{Binding ZespolyLista.IndeksArtysty}"
+                                      />
+                            </StackPanel>
+
+                            <!-- Długosc -->
+                            <TextBox Grid.Column="1"
+                                             Text="{Binding ZespolyLista.CzlonekStartWspolpracy}" TextAlignment="Right"
+                                             Margin="10"
+                                             />
+                            <Label Grid.Column="1" Content="Pocz. współp."/>
+
+                            <TextBox Grid.Column="2"
+                                             Text="{Binding ZespolyLista.CzlonekKoniecWspolpracy}" TextAlignment="Right"
+                                             Margin="10"
+                                             />
+                            <Label Grid.Column="2" Content="Kon. współp."/>
+                        </Grid>
+
+                        <!-- Utwory lista -->
+                        <DataGrid
+                              Grid.Row="5"
+                              IsReadOnly="True"
+                              ItemsSource="{Binding ZespolyLista.Czlonkowie}"
+                              SelectedIndex="{Binding ZespolyLista.IndeksCzlonka}"
+                              >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Artysta" Binding="{Binding Artysta}"/>
+                                <DataGridTextColumn Header="Początek współpracy" Binding="{Binding StartWspolpracy}"/>
+                                <DataGridTextColumn Header="Koniec współpracy" Binding="{Binding KoniecWspolpracy}"/>
+
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+
                 </Grid>
             </TabItem>
         </TabControl>

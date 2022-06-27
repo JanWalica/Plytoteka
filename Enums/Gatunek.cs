@@ -7,7 +7,6 @@ namespace Plytoteka.Enums
 {
     enum Gatunek
     {
-        inny,
         rock,
         jazz,
         pop,

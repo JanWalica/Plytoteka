@@ -9,10 +9,13 @@ namespace Plytoteka.DAL.Repositories
     static class RepoCzlonek
     {
         #region zapytania
-        private const string WSZYSTKO = "SELECT * FROM czlonkowie";
-        private const string DODAJ = "INSERT INTO 'czlonkowie' ('id_artysty', 'id_zespolu', 'pocz_wsp', 'koniec_wsp') VALUES ";
-        private const string USUN_PO_ARTYSCIE = "DELETE FROM wystapienia WHERE id_artysty=";
-        private const string USUN_PO_ZESPOLE = "DELETE FROM wystapienia WHERE id_zespolu=";
+        private const string WSZYSTKO = "SELECT cz.id_artysty, concat(a.imie, \" \", a.nazwisko) AS artysta, cz.id_zespolu, z.nazwa AS nazwa_zespolu, cz.pocz_wsp, cz.koniec_wsp " +
+            "FROM czlonkowie cz " +
+            "JOIN artysci a ON cz.id_artysty = a.id_artysty " +
+            "JOIN zespoly z ON cz.id_zespolu = z.id_zespolu;";
+        private const string DODAJ = "INSERT INTO czlonkowie (id_artysty, id_zespolu, pocz_wsp, koniec_wsp) VALUES ";
+        private const string USUN_PO_ARTYSCIE = "DELETE FROM czlonkowie WHERE id_artysty=";
+        private const string USUN_PO_ZESPOLE = "DELETE FROM czlonkowie WHERE id_zespolu=";
         #endregion
 
         #region CRUD
@@ -71,7 +74,7 @@ namespace Plytoteka.DAL.Repositories
 
             using (var connection = DBConnection.Instance.Connection)
             {
-                string USUN = $"DELETE FROM czlonkowie WHERE id_albumu={idAlbumu} AND id_utworu={idZespolu}";
+                string USUN = $"DELETE FROM czlonkowie WHERE id_artysty={idAlbumu} AND id_zespolu={idZespolu}";
                 MySqlCommand command = new MySqlCommand(USUN, connection);
                 connection.Open();
                 var n = command.ExecuteNonQuery();

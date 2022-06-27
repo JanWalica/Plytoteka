@@ -10,7 +10,8 @@ namespace Plytoteka.DAL.Repositories
     {
         #region zapytania
         private const string WSZYSTKO = "SELECT * FROM zespoly";
-        private const string DODAJ = "INSERT INTO 'zespoly' ('nazwa', 'data_zal', 'pochodzenie') VALUES ";
+        private const string DODAJ = "INSERT INTO zespoly (nazwa, data_zal, pochodzenie) VALUES ";
+        private const string USUN = "DELETE FROM zespoly WHERE id_zespolu=";
         #endregion
 
         #region CRUD
@@ -64,9 +65,20 @@ namespace Plytoteka.DAL.Repositories
             return stan;
         }
 
-        public static bool Usun(ushort id)
+        public static bool Usun(ushort? id)
         {
-            return true;
+            bool stan = false;
+
+            using (var connection = DBConnection.Instance.Connection)
+            {
+                MySqlCommand command = new MySqlCommand($"{USUN} {id}", connection);
+                connection.Open();
+                var n = command.ExecuteNonQuery();
+                if (n == 1) stan = true;
+
+                connection.Close();
+            }
+            return stan;
         }
         #endregion
     }

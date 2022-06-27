@@ -9,8 +9,10 @@ namespace Plytoteka.DAL.Entities
     class Czlonek : ICRUDStrings
     {
         #region wlasciwosci
-        public ushort Artysta { get; set; }
-        public ushort Zespol { get; set; }
+        public ushort ArtystaId { get; set; }
+        public ushort ZespolId { get; set; }
+        public string Artysta { get; set; }
+        public string Zespol { get; set; }
         public int StartWspolpracy { get; set; }
         public int? KoniecWspolpracy { get; set; }
         #endregion
@@ -18,23 +20,27 @@ namespace Plytoteka.DAL.Entities
         #region konstruktory
         public Czlonek(MySqlDataReader reader)
         {
-            Artysta = ushort.Parse(reader["id_artysty"].ToString());
-            Zespol = ushort.Parse(reader["id_zespolu"].ToString());
+            ArtystaId = ushort.Parse(reader["id_artysty"].ToString());
+            ZespolId = ushort.Parse(reader["id_zespolu"].ToString());
+
+            Artysta = reader["artysta"].ToString();
+            Zespol = reader["nazwa_zespolu"].ToString();
+
             StartWspolpracy = int.Parse(reader["pocz_wsp"].ToString());
             KoniecWspolpracy = int.TryParse(reader["koniec_wsp"].ToString(), out var kw) ? kw : default;
         }
         public Czlonek(ushort artysta, ushort zespol, int startWspolpracy, int? koniecWspolpracy)
         {
-            Artysta = artysta;
-            Zespol = zespol;
+            ArtystaId = artysta;
+            ZespolId = zespol;
             StartWspolpracy = startWspolpracy;
             KoniecWspolpracy = koniecWspolpracy;
         }
 
         public Czlonek(Czlonek czlonek)
         {
-            Artysta = czlonek.Artysta;
-            Zespol = czlonek.Zespol;
+            ArtystaId = czlonek.ArtystaId;
+            ZespolId = czlonek.ZespolId;
             StartWspolpracy = czlonek.StartWspolpracy;
             KoniecWspolpracy = czlonek.KoniecWspolpracy;
         }
@@ -48,16 +54,17 @@ namespace Plytoteka.DAL.Entities
 
         public string ToInsert()
         {
-            return $"('{Artysta}', " +
-                $"'{Zespol}', " +
+            var koniec = KoniecWspolpracy == null ? "NULL" : KoniecWspolpracy.ToString();
+            return $"('{ArtystaId}', " +
+                $"'{ZespolId}', " +
                 $"'{StartWspolpracy}', " +
-                $"'{KoniecWspolpracy}')";
+                $"{koniec})";
         }
 
         public string ToUpdate()
         {
-            return $"id_artysty='{Artysta}', " +
-                $"id_zespolu='{Zespol}', " +
+            return $"id_artysty='{ArtystaId}', " +
+                $"id_zespolu='{ZespolId}', " +
                 $"pocz_wsp='{StartWspolpracy}', " +
                 $"koniec_wsp='{KoniecWspolpracy}'";
         }
@@ -66,8 +73,8 @@ namespace Plytoteka.DAL.Entities
         {
             var czlonek = obj as Czlonek;
             if (czlonek is null) return false;
-            if (Artysta != czlonek.Artysta) return false;
-            if (Zespol != czlonek.Zespol) return false;
+            if (ArtystaId != czlonek.ArtystaId) return false;
+            if (ZespolId != czlonek.ZespolId) return false;
             if (StartWspolpracy != czlonek.StartWspolpracy) return false;
             if (KoniecWspolpracy != czlonek.KoniecWspolpracy) return false;
             return true;

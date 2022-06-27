@@ -49,14 +49,14 @@ namespace Plytoteka.DAL.Entities
         public string ToInsert()
         {
             return $"('{Nazwa}', " +
-                $"'{DataZalozenia}', " +
+                $"{DataZalozenia}, " +
                 $"'{Pochodzenie}')";
         }
 
         public string ToUpdate()
         {
             return $"nazwa='{Nazwa}', " +
-                $"data_zal='{DataZalozenia}', " +
+                $"data_zal={DataZalozenia}, " +
                 $"pochodzenie='{Pochodzenie}'";
         }
 
